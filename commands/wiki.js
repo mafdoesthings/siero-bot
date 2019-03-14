@@ -1,5 +1,7 @@
 const { Command } = require('discord-akairo')
 const { RichEmbed } = require('discord.js')
+const DomParser = require('dom-parser')
+const fetch = require("node-fetch")
 
 class WikiCommand extends Command {
     constructor() {
@@ -23,22 +25,23 @@ class WikiCommand extends Command {
     }
 
     exec(message, args) {
-        switch(args.operation) {
-            case "yolo":
-                yolo(message, args)
-                break
-            case "ten":
-                ten_pull(message, args)
-                break
-            case "spark":
-                spark(message, args)
-                break
-            case "help":
-                help(message)
-                break
-            default:
-                break
-        }
+        const url = new URL('https://gbf.wiki/Shiva')
+        fetch(url)
+            .then((response) => {
+                return response.text()
+            })
+            .then((html) => {
+                var parser = new DomParser()
+
+                var dom = parser.parseFromString(html, "text/html")
+                var content = dom.getElementById('mw-content-text')
+
+                console.log(content.innerHTML)
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+
     }
 }
 
