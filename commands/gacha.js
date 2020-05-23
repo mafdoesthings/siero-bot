@@ -628,7 +628,7 @@ class GachaCommand extends Command {
         let sql = [
             "SELECT COUNT(*)",
             "FROM gacha",
-            "WHERE name = $1 OR recruits = $1"
+            "WHERE name % $1 OR recruits % $1"
         ].join(" ")
 
         try {
@@ -642,12 +642,12 @@ class GachaCommand extends Command {
         let sql = [
             "SELECT id, name, recruits, rarity, item_type",
             "FROM gacha",
-            "WHERE name = $1 OR recruits = $1"
+            "WHERE name % $1 OR recruits % $1"
         ].join(" ")
 
         try {
             var results
-            return await Client.any(sql, [target])
+            return await Client.any(sql, target)
                 .then(data => {
                     results = data
                     return decision.buildDuplicateEmbed(data, target)
@@ -680,7 +680,7 @@ class GachaCommand extends Command {
     }
 
     async fetchSuppliedTarget(name) {
-        let sql = "SELECT * FROM gacha WHERE name = $1 OR recruits = $1"
+        let sql = "SELECT * FROM gacha WHERE name % $1 OR recruits % $1"
         return await Client.one(sql, [name])
             .then(res => {
                 return res
